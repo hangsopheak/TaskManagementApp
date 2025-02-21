@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">TaskManagement</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="login_here">Login Here</string>
+    <string name="welcome_msg">Welcome back you\'ve been missed</string>
+    <string name="forget_your_password">Forget your password?</string>
+    <string name="create_new_account">Create new account</string>
+    <string name="sign_in">Sign in</string>
+    <string name="create_account">Create Account</string>
+    <string name="create_an_account_so_you_can_explore_all_the_existing_jobs">Create an account so you can explore all the existing jobs</string>
+    <string name="password">Password</string>
+    <string name="already_have_an_account">Already have an account</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="email">Email</string>
+</resources>
