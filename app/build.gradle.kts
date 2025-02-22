@@ -5,7 +5,9 @@ plugins {
 android {
     namespace = "com.example.taskmanagement"
     compileSdk = 35
-
+    viewBinding {
+        enable = true
+    }
     defaultConfig {
         applicationId = "com.example.taskmanagement"
         minSdk = 28
