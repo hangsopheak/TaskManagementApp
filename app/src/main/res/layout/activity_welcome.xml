@@ -8,4 +8,65 @@
     android:background="@color/white"
     tools:context=".WelcomeActivity">
 
+    <ImageView
+        android:id="@+id/iv_welcome"
+        android:layout_width="330dp"
+        android:layout_height="330dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/welcome_image" />
+
+    <TextView
+        android:id="@+id/tv_welcome_title"
+        style="@style/primaryTitle"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/welcome_title"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_welcome" />
+
+    <TextView
+        android:id="@+id/tv_welcome_content"
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/welcome_content"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_welcome_title" />
+
+    <Button
+        android:id="@+id/btn_welcome_login"
+        style="@style/primaryButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        android:width="140dp"
+        android:text="@string/login"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_welcome_content" />
+
+    <Button
+        android:id="@+id/btn_welcome_register"
+        style="@style/secondaryButtonStyle"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
+        android:text="@string/register"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_welcome_login"
+        app:layout_constraintTop_toTopOf="@+id/btn_welcome_login" />
 </androidx.constraintlayout.widget.ConstraintLayout>

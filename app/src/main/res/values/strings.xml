@@ -13,4 +13,6 @@
     <string name="already_have_an_account">Already have an account</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="email">Email</string>
+    <string name="welcome_title">Simplify Your Daily Task</string>
+    <string name="welcome_content">Find and organise your to-dos and tasks to make your day more managable and stress-free</string>
 </resources>
