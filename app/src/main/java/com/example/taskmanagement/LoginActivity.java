@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
         }else {
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("email", email);
-            startActivity(intent);
+            activityResultLauncher.launch(intent);
         }
     }
 }
