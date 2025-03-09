@@ -8,25 +8,18 @@
     android:background="@color/white"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/tv_email_label"
-        android:layout_width="wrap_content"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text="@string/email"
-        android:textSize="32sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_email_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text=""
-        android:textSize="32sp"
-        app:layout_constraintStart_toEndOf="@+id/tv_email_label"
-        app:layout_constraintTop_toTopOf="@+id/tv_email_label" />
-
+        android:background="@color/primary"
+        android:focusableInTouchMode="true"
+        app:itemActiveIndicatorStyle="@style/BottomNavFocusIndicator"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        app:menu="@menu/bottom_navigation_menu"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
