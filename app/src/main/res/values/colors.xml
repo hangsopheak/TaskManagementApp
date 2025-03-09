@@ -4,4 +4,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="primary">#1F41BB</color>
     <color name="text">#494949</color>
+    <color name="colorFocus">#673AB7</color>
+    <color name="completeColor">#4CAF50</color>
+    <color name="todoColor">#2196F3</color>
+    <color name="overdueColor">#C71407</color>
+
 </resources>

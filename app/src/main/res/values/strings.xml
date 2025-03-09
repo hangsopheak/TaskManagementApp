@@ -15,4 +15,12 @@
     <string name="email">Email</string>
     <string name="welcome_title">Simplify Your Daily Task</string>
     <string name="welcome_content">Find and organise your to-dos and tasks to make your day more managable and stress-free</string>
+    <string name="tasks">Tasks</string>
+    <string name="categories">Categories</string>
+    <string name="calendar">Calendar</string>
+    <string name="setting">Setting</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="description">Description</string>
+    <string name="completed">Completed</string>
+    <string name="to_do">To Do</string>
 </resources>
