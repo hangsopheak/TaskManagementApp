@@ -23,8 +23,12 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="BottomNavFocusIndicator" parent="">
-        <item name="android:color">@color/colorFocus</item> <!-- Focus color -->
+    <style name="BottomNavFocusIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/colorFocus</item>
+        <item name="android:width">64dp</item>
+        <item name="android:height">32dp</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="cornerFamily">rounded</item>
     </style>
 
     <style name="status">
