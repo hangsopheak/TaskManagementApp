@@ -63,7 +63,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(holder.itemView.getContext(), DetailTaskActivity.class);
-            intent.putExtra("expenseId", task.getId()); // Pass only the ID
+            intent.putExtra("taskId", task.getId()); // Pass only the ID
             holder.itemView.getContext().startActivity(intent);
         });
     }

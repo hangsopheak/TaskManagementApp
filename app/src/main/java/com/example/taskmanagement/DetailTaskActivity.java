@@ -19,7 +19,7 @@ public class DetailTaskActivity extends AppCompatActivity {
         binding = ActivityDetailTaskBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        String TaskId = getIntent().getStringExtra("TaskId");
+        String TaskId = getIntent().getStringExtra("taskId");
         Task task = TaskData.getTaskById(TaskId);
         binding.tvTaskDetailTitle.setText(task.getTitle());
         binding.tvTaskDetailDescription.setText(task.getDescription());
