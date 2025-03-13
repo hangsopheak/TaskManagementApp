@@ -40,8 +40,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         holder.binding.tvTaskTitle.setText(task.getTitle());
         holder.binding.tvTaskDescription.setText(task.getDescription());
         holder.binding.tvDueDate.setText(task.getFormattedDueDate());
-        holder.binding.chCategory.setText(task.getCategory());
-        String colorCode = TaskData.getCategoryColor(task.getCategory());
+        holder.binding.chCategory.setText(task.getCategory().getName());
+        String colorCode = task.getCategory().getColorCode();
         holder.binding.chCategory.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor(colorCode)));
 
         holder.binding.swComplete.setChecked(task.isCompleted());

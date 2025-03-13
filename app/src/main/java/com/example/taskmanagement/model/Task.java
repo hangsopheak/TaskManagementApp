@@ -1,5 +1,7 @@
 package com.example.taskmanagement.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -9,10 +11,60 @@ public class Task {
     private String id;
     private String title;
     private String description;
-
     private Date dueDate;
-    private String category;
+    @SerializedName("categoryId")
+    private String categoryId;
     private boolean isCompleted;
+    private String createdBy;
+    private Date createdDate;
+    private String updatedBy;
+    private Date updatedDate;
+
+    private Category category;
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public Date getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(Date updatedDate) {
+        this.updatedDate = updatedDate;
+    }
 
     public String getId() {
         return id;
@@ -47,12 +99,12 @@ public class Task {
         this.dueDate = dueDate;
     }
 
-    public String getCategory() {
-        return category;
+    public String getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 
     public boolean isCompleted() {
@@ -63,12 +115,12 @@ public class Task {
         isCompleted = completed;
     }
 
-    public Task(String title, String description, Date dueDate, String category, boolean isCompleted) {
+    public Task(String title, String description, Date dueDate, String categoryId, boolean isCompleted) {
         this.id = UUID.randomUUID().toString();
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;
-        this.category = category;
+        this.categoryId = categoryId;
         this.isCompleted = isCompleted;
     }
 

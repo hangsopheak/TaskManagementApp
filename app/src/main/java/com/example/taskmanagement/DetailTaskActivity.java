@@ -23,7 +23,7 @@ public class DetailTaskActivity extends AppCompatActivity {
         Task task = TaskData.getTaskById(TaskId);
         binding.tvTaskDetailTitle.setText(task.getTitle());
         binding.tvTaskDetailDescription.setText(task.getDescription());
-        binding.tvTaskDetailCategory.setText(task.getCategory());
+        binding.tvTaskDetailCategory.setText(task.getCategoryId());
         binding.tvTaskDetailDueDate.setText(task.getFormattedDueDate());
         binding.swTaskDetailComplete.setChecked(task.isCompleted());
 
