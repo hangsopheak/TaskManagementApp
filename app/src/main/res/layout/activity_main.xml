@@ -8,25 +8,31 @@
     android:background="@color/white"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/tv_email_label"
-        android:layout_width="wrap_content"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text="@string/email"
-        android:textSize="32sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:menu="@menu/bottom_menu_item"
+        android:background="@color/primary"
+        app:itemActiveIndicatorStyle="@style/BottomNavFocusIndicator"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        app:labelVisibilityMode="labeled"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        />
 
-    <TextView
-        android:id="@+id/tv_email_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text=""
-        android:textSize="32sp"
-        app:layout_constraintStart_toEndOf="@+id/tv_email_label"
-        app:layout_constraintTop_toTopOf="@+id/tv_email_label" />
+    <FrameLayout
+        android:id="@+id/fragement_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
