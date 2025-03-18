@@ -16,6 +16,7 @@ import com.example.taskmanagement.databinding.ItemTaskBinding;
 import com.example.taskmanagement.model.Task;
 import com.example.taskmanagement.service.TaskData;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
     private List<Task> tasks;
 
+    // TODO: update constructor to no tasks
     public TaskAdapter(List<Task> tasks) {
         this.tasks = tasks;
     }
@@ -89,6 +91,20 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
         return tasks.size();
+    }
+
+    // allow user to initialize the tasks
+    public void setTasks(List<Task> newTasks) {
+        tasks.clear();
+        tasks.addAll(newTasks);
+        notifyDataSetChanged();
+    }
+
+    // allow user to append new tasks when receiving new tasks from APIs
+    public void addTasks(List<Task> newTasks) {
+        int startPosition = tasks.size();
+        tasks.addAll(newTasks);
+        notifyItemRangeInserted(startPosition, newTasks.size());
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
