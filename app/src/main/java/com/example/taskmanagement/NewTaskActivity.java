@@ -14,12 +14,15 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.taskmanagement.databinding.ActivityNewTaskBinding;
 import com.example.taskmanagement.model.Category;
-import com.example.taskmanagement.service.CategoryRepository;
-import com.example.taskmanagement.service.IApiCallback;
-import com.example.taskmanagement.service.TaskRepository;
+import com.example.taskmanagement.model.Task;
+import com.example.taskmanagement.repository.CategoryRepository;
+import com.example.taskmanagement.repository.IApiCallback;
+import com.example.taskmanagement.repository.TaskRepository;
+import com.example.taskmanagement.util.DateConverter;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -34,6 +37,8 @@ public class NewTaskActivity extends AppCompatActivity {
     MaterialDatePicker datePicker;
     MaterialTimePicker timePicker;
 
+    private FirebaseAuth mAuth;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,42 +51,30 @@ public class NewTaskActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
+        mAuth = FirebaseAuth.getInstance();
         taskRepository = new TaskRepository();
         categoryRepository = new CategoryRepository();
         loadCategories();
+        initDatePicker();
+        initTimePicker();
+        setupListeners();
 
+    }
+
+    private void initTimePicker() {
+        timePicker = new MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_24H).build();
+        timePicker.addOnPositiveButtonClickListener(selection -> {
+            binding.tvNewTaskDuetime.setText(String.format("%02d:%02d", timePicker.getHour() , timePicker.getMinute()));
+        });
+
+    }
+
+    private void initDatePicker() {
         datePicker = MaterialDatePicker.Builder.datePicker()
                 .setTitleText("Select date")
                 .setInputMode(MaterialDatePicker.INPUT_MODE_CALENDAR)
                 .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                 .build();
-        timePicker = new MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_12H).build();
-
-
-        binding.tvNewTaskDuedate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if (b){
-                    NewTaskActivity.this.showDatePicker();
-                }
-            }
-        });
-
-
-
-
-        binding.tvNewTaskDuetime.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if (b) {
-                    NewTaskActivity.this.showTimePicker();
-                }
-
-            }
-        });
-
-
 
         datePicker.addOnPositiveButtonClickListener(selection -> {
             // selection is a Long representing the selected date in milliseconds
@@ -91,25 +84,6 @@ public class NewTaskActivity extends AppCompatActivity {
 
             // Set the selected date to your TextView or wherever you need it
             binding.tvNewTaskDuedate.setText(formattedDate);
-        });
-
-        timePicker.addOnPositiveButtonClickListener(selection -> {
-            binding.tvNewTaskDuetime.setText(String.format("%02d:%02d", timePicker.getHour() , timePicker.getMinute()));
-        });
-
-
-
-        // Handle item selection
-        binding.spNewTaskCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                 selectedCategory = (Category) parent.getItemAtPosition(position);
-
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
         });
     }
 
@@ -123,18 +97,85 @@ public class NewTaskActivity extends AppCompatActivity {
     }
 
     private void loadCategories() {
+        showProgressBar();
         categoryRepository.getCategories(new IApiCallback<List<Category>>() {
             @Override
             public void onSuccess(List<Category> categories) {
-                ArrayAdapter<Category> adapter = new ArrayAdapter<>(getApplicationContext(),  android.R.layout.simple_spinner_item, categories);
+                hideProgressBar();
+                if (categories == null || categories.isEmpty()) {
+                    Toast.makeText(NewTaskActivity.this, "No categories found", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                ArrayAdapter<Category> adapter = new ArrayAdapter<>(NewTaskActivity.this,
+                        android.R.layout.simple_spinner_item, categories);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                // Set adapter to Spinner
                 binding.spNewTaskCategory.setAdapter(adapter);
             }
             @Override
             public void onError(String errorMessage) {
-                Toast.makeText(getParent(), errorMessage, Toast.LENGTH_SHORT).show();
+                hideProgressBar();
+                Toast.makeText(NewTaskActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                binding.spNewTaskCategory.setEnabled(false);
+
             }
+        });
+    }
+
+    private void showProgressBar() {
+        binding.tasksProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void hideProgressBar() {
+        binding.tasksProgressBar.setVisibility(View.GONE);
+    }
+
+    private void setupListeners(){
+        binding.tvNewTaskDuedate.setOnClickListener(view -> showDatePicker());
+        binding.tvNewTaskDuetime.setOnClickListener(view -> showTimePicker());
+        binding.btNewTask.setOnClickListener(view -> addTask());
+
+        // Handle item selection
+        binding.spNewTaskCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedCategory = (Category) parent.getItemAtPosition(position);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void addTask() {
+        showProgressBar();
+        String title = binding.etNewTaskTitle.getText().toString();
+        String description = binding.etNewTaskDescription.getText().toString();
+        String dueDate = binding.tvNewTaskDuedate.getText().toString();
+        String dueTime = binding.tvNewTaskDuetime.getText().toString();
+
+        if (title.isEmpty() || dueDate.isEmpty() || dueTime.isEmpty() || selectedCategory == null) {
+            Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Task task = new Task(title, description, DateConverter.convertToDate(dueDate, dueTime), selectedCategory.getId(), false , mAuth.getUid(), new java.util.Date());
+        taskRepository.createTask(task, new IApiCallback<Task>() {
+
+
+            @Override
+            public void onSuccess(Task result) {
+                hideProgressBar();
+                finish();
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                hideProgressBar();
+                Toast.makeText(NewTaskActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+
+            }
+
         });
     }
 }

@@ -1,7 +1,7 @@
-package com.example.taskmanagement.service;
+package com.example.taskmanagement.repository;
 
 import com.example.taskmanagement.model.Category;
-import com.example.taskmanagement.model.Task;
+import com.example.taskmanagement.service.ICategoryService;
 import com.example.taskmanagement.util.RetrofitClient;
 
 import java.util.List;

@@ -14,8 +14,9 @@ import com.example.taskmanagement.DetailTaskActivity;
 import com.example.taskmanagement.R;
 import com.example.taskmanagement.databinding.ItemTaskBinding;
 import com.example.taskmanagement.model.Task;
-import com.example.taskmanagement.service.TaskData;
 
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,8 +24,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
     private List<Task> tasks;
 
-    public TaskAdapter(List<Task> tasks) {
-        this.tasks = tasks;
+    public TaskAdapter() {
+        tasks = new ArrayList<>();
     }
 
     @NonNull
@@ -57,6 +58,18 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
            intent.putExtra("TaskId", task.getId());
            holder.itemView.getContext().startActivity(intent);
         });
+    }
+
+    public void setTasks(List<Task> newTasks) {
+        tasks.clear();
+        tasks.addAll(newTasks);
+        notifyDataSetChanged();
+    }
+
+    public void addTasks(List<Task> newTasks) {
+        int startPosition = tasks.size();
+        tasks.addAll(newTasks);
+        notifyItemRangeInserted(startPosition, newTasks.size());
     }
 
     private int getStatusColor(String status) {

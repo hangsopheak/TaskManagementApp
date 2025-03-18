@@ -79,8 +79,12 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        binding.bottomNavigation.setSelectedItemId(R.id.nav_tasks);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        binding.bottomNavigation.setSelectedItemId(R.id.nav_tasks);
     }
 
     private void LoadFragment(Fragment fragment) {

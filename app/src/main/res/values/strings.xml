@@ -25,4 +25,8 @@
     <string name="to_do">To Do</string>
     <string name="sign_out">Sign Out</string>
     <string name="add_task">Add Task</string>
+    <string name="select_due_time">Select Due Time</string>
+    <string name="select_due_date">Select due date</string>
+    <string name="task_title">Task title</string>
+    <string name="task_description">Task Description</string>
 </resources>
