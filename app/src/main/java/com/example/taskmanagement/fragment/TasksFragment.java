@@ -80,10 +80,10 @@ public class TasksFragment extends Fragment {
     }
 
     private void loadTasks()  {
-      //  isLoading = true;
+        isLoading = true;
         showProgressBar();
-        String currentUserId = "1249588e-aea4-4a9e-930d-0778c8669364";
-       // String currentUserId = mAuth.getCurrentUser().getUid();
+        //String currentUserId = "1249588e-aea4-4a9e-930d-0778c8669364";
+        String currentUserId = mAuth.getCurrentUser().getUid();
         repository.getTasks(currentPage, currentUserId, new IApiCallback<List<Task>>() {
             @Override
             public void onSuccess(List<Task> tasks) {
