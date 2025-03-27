@@ -77,7 +77,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             return "Completed";
         }
 
-        if(task.getDueDate().before(new Date()))
+        if(task.getDueDate().after(new Date()))
         {
             return "To Do";
         }
