@@ -52,7 +52,7 @@ public class NewTaskActivity extends BaseActivity {
         });
 
         categoryRepository = new CategoryRepository();
-        taskRepository = new TaskRepository();
+        taskRepository = new TaskRepository(this);
         mAuth = FirebaseAuth.getInstance();
         loadCategories();
         initDatePicker();
