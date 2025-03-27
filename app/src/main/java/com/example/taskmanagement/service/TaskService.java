@@ -17,11 +17,11 @@ public interface TaskService {
     Call<List<Task>> getTasks(@Query("_page") int page, @Query("_limit") int limit, @Query("createdBy") String createdBy);
 
     @GET("tasks/{id}")
-    Call<Task> getTask(@Path("id") int id);
+    Call<Task> getTask(@Path("id") String id);
 
     @POST("tasks")
     Call<Task> createTask(@Body Task task);
 
     @DELETE("tasks/{id}")
-    Call<Void> deleteTask(@Path("id") int taskId);
+    Call<Void> deleteTask(@Path("id") String taskId);
 }

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/white"
+    style="@style/layoutStyle"
     tools:context=".MainActivity">
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -30,8 +30,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@color/primary"
         android:focusableInTouchMode="true"
+        style="@style/BottomNavigation"
         app:itemActiveIndicatorStyle="@style/BottomNavFocusIndicator"
         app:itemIconTint="@color/white"
         app:itemTextColor="@color/white"

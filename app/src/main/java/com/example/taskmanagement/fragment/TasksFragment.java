@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,6 +22,7 @@ import com.example.taskmanagement.repository.TaskRepository;
 import com.google.android.material.carousel.CarouselLayoutManager;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -34,6 +36,7 @@ public class TasksFragment extends Fragment {
     private static final int PRE_LOAD_ITEMS = 1;
     private FirebaseAuth mAuth;
     private TaskAdapter taskAdapter;
+    private List<Task> allTasks;
     public TasksFragment() {
         // Required empty public constructor
     }
@@ -47,8 +50,9 @@ public class TasksFragment extends Fragment {
         binding.rcvTasks.setLayoutManager(layoutManager);
         taskAdapter = new TaskAdapter();
         binding.rcvTasks.setAdapter(taskAdapter);
-        repository = new TaskRepository();
+        repository = new TaskRepository(requireContext());
         mAuth = FirebaseAuth.getInstance();
+        allTasks = new ArrayList<>();
 
         binding.rcvTasks.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -64,7 +68,47 @@ public class TasksFragment extends Fragment {
             }
         });
 
+        setSwipeToDelete();
         return binding.getRoot();
+    }
+
+    private void setSwipeToDelete() {
+        taskAdapter.setOnTaskDeleteListener(new TaskAdapter.OnTaskDeleteListener() {
+            @Override
+            public void onTaskDelete(Task task) {
+                deleteTask(task.getId());
+            }
+        });
+
+        // swipe to delete
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                taskAdapter.removeTask(viewHolder.getAdapterPosition());
+
+            }
+        }).attachToRecyclerView(binding.rcvTasks);
+    }
+
+    private void deleteTask(String id) {
+        showProgressBar();
+        repository.deleteTask(id, new IApiCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                hideProgressBar();
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                hideProgressBar();
+                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -82,12 +126,12 @@ public class TasksFragment extends Fragment {
     private void loadTasks()  {
         isLoading = true;
         showProgressBar();
-        //String currentUserId = "1249588e-aea4-4a9e-930d-0778c8669364";
         String currentUserId = mAuth.getCurrentUser().getUid();
         repository.getTasks(currentPage, currentUserId, new IApiCallback<List<Task>>() {
             @Override
             public void onSuccess(List<Task> tasks) {
                 if(!tasks.isEmpty()){
+                    allTasks.addAll(tasks);
                     taskAdapter.addTasks(tasks);
                     currentPage++;
                 }

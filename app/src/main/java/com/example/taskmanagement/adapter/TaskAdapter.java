@@ -22,6 +22,15 @@ import java.util.List;
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
     private List<Task> tasks;
+    private OnTaskDeleteListener deleteListener;
+    // Interface for delete callback
+    public interface OnTaskDeleteListener {
+        void onTaskDelete(Task task);
+    }
+
+    public void setOnTaskDeleteListener(OnTaskDeleteListener listener) {
+        this.deleteListener = listener;
+    }
 
     public TaskAdapter() {
         this.tasks = new ArrayList<>();
@@ -77,7 +86,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             return "Completed";
         }
 
-        if(task.getDueDate().before(new Date()))
+        if(task.getDueDate().after(new Date()))
         {
             return "To Do";
         }
@@ -103,6 +112,17 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         int startPosition = tasks.size();
         tasks.addAll(newTasks);
         notifyItemRangeInserted(startPosition, newTasks.size());
+    }
+
+    public void removeTask(int position) {
+        if (position >= 0 && position < tasks.size()) {
+            Task removedTask = tasks.remove(position);
+            notifyItemRemoved(position);
+
+            if (deleteListener != null) {
+                deleteListener.onTaskDelete(removedTask);
+            }
+        }
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

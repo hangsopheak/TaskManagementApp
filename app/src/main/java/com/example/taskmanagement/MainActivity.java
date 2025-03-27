@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SettingFragment.applyAppSettings(this);
+
         EdgeToEdge.enable(this);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -81,7 +83,11 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        binding.bottomNavigation.setSelectedItemId(R.id.nav_tasks);
+        if(savedInstanceState == null){
+            binding.bottomNavigation.setSelectedItemId(R.id.nav_tasks);
+        }else{
+            binding.bottomNavigation.setSelectedItemId(savedInstanceState.getInt("selectedItemId"));
+        }
     }
 
     private void LoadFragment(Fragment fragment) {

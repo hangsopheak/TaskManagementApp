@@ -2,18 +2,14 @@ package com.example.taskmanagement.service;
 
 import android.app.Application;
 
-public class MyApp extends Application {
+import com.example.taskmanagement.fragment.SettingFragment;
 
-    IUserService userService;
+public class MyApp extends Application {
 
     @Override
     public void onCreate() {
         super.onCreate();
-        userService = new UserService();
-    }
-
-    public IUserService getUserService(){
-        return userService;
+        SettingFragment.applyAppSettings(getApplicationContext());
     }
 
 

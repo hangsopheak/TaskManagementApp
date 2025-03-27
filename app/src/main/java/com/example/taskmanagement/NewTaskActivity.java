@@ -19,6 +19,7 @@ import com.example.taskmanagement.repository.CategoryRepository;
 import com.example.taskmanagement.repository.IApiCallback;
 import com.example.taskmanagement.repository.TaskRepository;
 import com.example.taskmanagement.util.DateConverter;
+import com.example.taskmanagement.util.NetworkUtil;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
@@ -51,7 +52,7 @@ public class NewTaskActivity extends AppCompatActivity {
             return insets;
         });
         categoryRepository = new CategoryRepository();
-        taskRepository = new TaskRepository();
+        taskRepository = new TaskRepository(this);
         mAuth = FirebaseAuth.getInstance();
         loadCategories();
         initDatePicker();
