@@ -50,6 +50,7 @@ public class NewTaskActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         categoryRepository = new CategoryRepository();
         taskRepository = new TaskRepository();
         mAuth = FirebaseAuth.getInstance();
@@ -57,7 +58,6 @@ public class NewTaskActivity extends AppCompatActivity {
         initDatePicker();
         initTimePicker();
         setupListeners();
-
     }
 
     private void initTimePicker() {

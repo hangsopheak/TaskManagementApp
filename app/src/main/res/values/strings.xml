@@ -29,4 +29,15 @@
     <string name="select_due_date">Select due date</string>
     <string name="task_title">Task title</string>
     <string name="task_description">Task Description</string>
+    <string name="choose_your_preferred_language">Choose your preferred language</string>
+    <string name="select_app_color_scheme">Select app color scheme</string>
+    <string name="default_reminder">Default Reminder</string>
+    <string name="set_reminder_time_before_task_deadline">Set reminder time before task deadline</string>
+    <string name="language">Language</string>
+    <string name="backup_tasks">Backup Tasks</string>
+    <string name="backup_tasks_summary">Click to backup your tasks to a JSON file</string>
+    <string name="loading_tasks">Loading tasks...</string>
+    <string name="tasks_have_been_backed_up_successfully">Tasks have been backed up successfully!</string>
+    <string name="unsynced_tasks">Unsynced Tasks</string>
+    <string name="unsynced_tasks_summary">%1$d tasks pending sync</string>
 </resources>

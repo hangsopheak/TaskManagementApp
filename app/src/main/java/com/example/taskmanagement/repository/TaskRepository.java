@@ -57,7 +57,7 @@ public class TaskRepository {
         });
     }
 
-    public void deleteTask(int taskId, final IApiCallback<String> callback) {
+    public void deleteTask(String taskId, final IApiCallback<String> callback) {
         taskService.deleteTask(taskId).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {

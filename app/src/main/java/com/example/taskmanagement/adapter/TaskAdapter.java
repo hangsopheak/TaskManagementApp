@@ -23,6 +23,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
     private List<Task> tasks;
 
+    private OnTaskDeleteListener deleteListener;
+    // Interface for delete callback
+    public interface OnTaskDeleteListener {
+        void onTaskDelete(Task task);
+    }
+
+    public void setOnTaskDeleteListener(OnTaskDeleteListener listener) {
+        this.deleteListener = listener;
+    }
+
     public TaskAdapter() {
         this.tasks = new ArrayList<>();
     }
@@ -77,7 +87,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             return "Completed";
         }
 
-        if(task.getDueDate().before(new Date()))
+        if(task.getDueDate().after(new Date()))
         {
             return "To Do";
         }
@@ -96,6 +106,17 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         tasks.clear();
         tasks.addAll(newTasks);
         notifyDataSetChanged();
+    }
+
+    public void removeTask(int position) {
+        if (position >= 0 && position < tasks.size()) {
+            Task removedTask = tasks.remove(position);
+            notifyItemRemoved(position);
+
+            if (deleteListener != null) {
+                deleteListener.onTaskDelete(removedTask);
+            }
+        }
     }
 
     // allow user to append new tasks when receiving new tasks from APIs
