@@ -61,7 +61,7 @@ public class TasksFragment extends Fragment {
                 int lastVisibleItem = layoutManager.findLastVisibleItemPosition();
 
                 if (!isLoading && totalItemCount <= (lastVisibleItem + PRE_LOAD_ITEMS)) {
-                    loadTasks();
+                    loadTasks(false);
                 }
             }
         });
@@ -117,10 +117,11 @@ public class TasksFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        loadTasks();
+        currentPage = 1;
+        loadTasks(true);
     }
 
-    private void loadTasks()  {
+    private void loadTasks(boolean reset)  {
         isLoading = true;
         showProgressBar();
         //String currentUserId = "1249588e-aea4-4a9e-930d-0778c8669364";
@@ -129,7 +130,11 @@ public class TasksFragment extends Fragment {
             @Override
             public void onSuccess(List<Task> tasks) {
                 if(!tasks.isEmpty()){
-                    taskAdapter.addTasks(tasks);
+                    if (reset) {
+                        taskAdapter.setTasks(tasks);
+                    } else {
+                        taskAdapter.addTasks(tasks);
+                    }
                     currentPage++;
                 }
                 isLoading = false;
