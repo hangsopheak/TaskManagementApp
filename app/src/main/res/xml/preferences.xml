@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ListPreference
+        android:key="app_language"
+        android:title="@string/language"
+        android:summary="@string/choose_your_preferred_language"
+        android:entries="@array/language_entries"
+        android:entryValues="@array/language_values"
+        android:defaultValue="en"
+        app:useSimpleSummaryProvider="true"
+        app:iconSpaceReserved="false"/>
+
+    <ListPreference
+        android:key="app_theme"
+        android:title="Theme"
+        android:summary="@string/select_app_color_scheme"
+        android:entries="@array/theme_entries"
+        android:entryValues="@array/theme_values"
+        android:defaultValue="light"
+        app:useSimpleSummaryProvider="true"
+        app:iconSpaceReserved="false"/>
+
+    <ListPreference
+        android:key="default_reminder_time"
+        android:title="@string/default_reminder"
+        android:summary="@string/set_reminder_time_before_task_deadline"
+        android:entries="@array/reminder_time_entries"
+        android:entryValues="@array/reminder_time_values"
+        android:defaultValue="60"
+        app:useSimpleSummaryProvider="true"
+        app:iconSpaceReserved="false"/>
+
+    <Preference
+        android:key="backup_tasks"
+        android:title="@string/backup_tasks"
+        android:summary="@string/backup_tasks_summary"
+        android:defaultValue="false"
+        app:iconSpaceReserved="false"/>
+
+    <Preference
+        android:key="unsynced_tasks"
+        android:title="@string/unsynced_tasks"
+        android:summary="@string/unsynced_tasks_summary"
+        app:useSimpleSummaryProvider="true"
+        app:iconSpaceReserved="false" />
+
+</PreferenceScreen>
