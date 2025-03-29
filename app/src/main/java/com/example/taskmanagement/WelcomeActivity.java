@@ -12,10 +12,29 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.taskmanagement.databinding.ActivityWelcomeBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class WelcomeActivity extends AppCompatActivity {
 
     private ActivityWelcomeBinding binding;
+    private FirebaseAuth mAuth;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null){
+            reload();
+        }
+    }
+
+    private void reload() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +43,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
         binding = ActivityWelcomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        mAuth = FirebaseAuth.getInstance();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -43,47 +63,7 @@ public class WelcomeActivity extends AppCompatActivity {
         Log.d("WelcomeActivity", "onCreate()");
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Toast.makeText(this, "onStart()", Toast.LENGTH_SHORT).show();
-        Log.d("WelcomeActivity", "onStart()");
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Toast.makeText(this, "onResume()", Toast.LENGTH_SHORT).show();
-        Log.d("WelcomeActivity", "onResume()");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Toast.makeText(this, "onPause()", Toast.LENGTH_SHORT).show();
-        Log.d("WelcomeActivity", "onPause()");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Toast.makeText(this, "onStop()", Toast.LENGTH_SHORT).show();
-        Log.d("WelcomeActivity", "onStop()");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Toast.makeText(this, "onDestroy()", Toast.LENGTH_SHORT).show();
-        Log.d("WelcomeActivity", "onDestroy()");
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Toast.makeText(this, "onRestart()", Toast.LENGTH_SHORT).show();
-        Log.d("WelcomeActivity", "onRestart()");
-    }
 
     private void onRegisterClicked() {
         Intent intent = new Intent(this, RegisterActivity.class);
