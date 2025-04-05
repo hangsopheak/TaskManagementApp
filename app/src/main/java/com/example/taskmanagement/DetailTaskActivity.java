@@ -3,11 +3,10 @@ package com.example.taskmanagement;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import com.example.taskmanagement.databinding.ActivityDetailTaskBinding;
 
 
-public class DetailTaskActivity extends AppCompatActivity {
+public class DetailTaskActivity extends BaseActivity {
 
     private ActivityDetailTaskBinding binding;
 

@@ -28,7 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class NewTaskActivity extends AppCompatActivity {
+public class NewTaskActivity extends BaseActivity {
 
 
     ActivityNewTaskBinding binding;
@@ -52,7 +52,7 @@ public class NewTaskActivity extends AppCompatActivity {
         });
 
         categoryRepository = new CategoryRepository();
-        taskRepository = new TaskRepository();
+        taskRepository = new TaskRepository(this);
         mAuth = FirebaseAuth.getInstance();
         loadCategories();
         initDatePicker();

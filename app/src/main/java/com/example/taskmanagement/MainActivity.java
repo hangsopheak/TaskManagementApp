@@ -1,5 +1,6 @@
 package com.example.taskmanagement;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -17,9 +18,10 @@ import com.example.taskmanagement.fragment.CalendarFragment;
 import com.example.taskmanagement.fragment.CategoriesFragment;
 import com.example.taskmanagement.fragment.SettingFragment;
 import com.example.taskmanagement.fragment.TasksFragment;
+import com.example.taskmanagement.util.LocaleHelper;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private ActivityMainBinding binding;
     private FirebaseAuth mAuth;
@@ -81,7 +83,12 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        binding.bottomNavigation.setSelectedItemId(R.id.nav_tasks);
+        // To ensure the selected bottom navigation item is always visible and stay where it was when activity recreated
+        if(savedInstanceState == null){
+            binding.bottomNavigation.setSelectedItemId(R.id.nav_tasks);
+        }else{
+            binding.bottomNavigation.setSelectedItemId(savedInstanceState.getInt("selectedItemId"));
+        }
     }
 
     private void LoadFragment(Fragment fragment) {

@@ -1,5 +1,13 @@
 package com.example.taskmanagement.model;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
+
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -13,22 +21,49 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.UUID;
 
+@Entity(tableName = "tasks")
 public class Task {
+
+    @PrimaryKey
+    @NonNull
     private String id;
+    @ColumnInfo(name = "is_synced")
+    private boolean isSynced;
+    @ColumnInfo(name = "title")
     private String title;
+    @ColumnInfo(name = "description")
     private String description;
     @JsonAdapter(ISO8601DateAdapter.class)
+    @TypeConverters(DateConverter.class)
+    @ColumnInfo(name = "due_date")
     private Date dueDate;
     @SerializedName("categoryId")
+    @ColumnInfo(name = "category_id")
     private String categoryId;
+    @ColumnInfo(name = "is_completed")
     private boolean isCompleted;
+    @ColumnInfo(name = "created_by")
     private String createdBy;
     @JsonAdapter(ISO8601DateAdapter.class)
+    @TypeConverters(DateConverter.class)
+    @ColumnInfo(name = "created_date")
     private Date createdDate;
+    @ColumnInfo(name = "updated_by")
     private String updatedBy;
+    @JsonAdapter(ISO8601DateAdapter.class)
+    @TypeConverters(DateConverter.class)
+    @ColumnInfo(name = "updated_date")
     private Date updatedDate;
-
+    @Ignore
     private Category category;
+
+    public boolean isSynced() {
+        return isSynced;
+    }
+
+    public void setSynced(boolean synced) {
+        isSynced = synced;
+    }
 
     public void setId(String id) {
         this.id = id;
@@ -159,6 +194,20 @@ public class Task {
             } catch (Exception e) {
                 return null;
             }
+        }
+    }
+
+
+
+    public static class DateConverter {
+        @TypeConverter
+        public static Date fromTimestamp(Long value) {
+            return value == null ? null : new Date(value);
+        }
+
+        @TypeConverter
+        public static Long dateToTimestamp(Date date) {
+            return date == null ? null : date.getTime();
         }
     }
 

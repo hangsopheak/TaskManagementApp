@@ -1,27 +1,190 @@
 package com.example.taskmanagement.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.Toast;
 
-import androidx.fragment.app.Fragment;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
 import com.example.taskmanagement.R;
+import com.example.taskmanagement.dao.AppDatabase;
+import com.example.taskmanagement.dao.TaskDao;
+import com.example.taskmanagement.model.Task;
+import com.example.taskmanagement.repository.IApiCallback;
+import com.example.taskmanagement.repository.TaskRepository;
+import com.example.taskmanagement.util.LocaleHelper;
+import com.example.taskmanagement.util.NetworkUtil;
+import com.example.taskmanagement.util.ThemeHelper;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
-public class SettingFragment extends Fragment {
+public class SettingFragment extends PreferenceFragmentCompat {
 
+    private static final String PREF_LANGUAGE = "app_language";
+    private static final String PREF_THEME = "app_theme";
+    private static final String PREF_BACKUP = "backup_tasks";
 
+    private TaskRepository taskRepository;
+    private FirebaseAuth mAuth;
+    private int currentPage = 1;
+
+    private int countUnsyncedTasks;
+    private TaskDao taskDao;
     public SettingFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_setting, container, false);
+    public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
+        // Set the preferences from XML resource
+        setPreferencesFromResource(R.xml.preferences, rootKey);
+
+        taskRepository = new TaskRepository(requireContext());
+        mAuth = FirebaseAuth.getInstance();
+        AppDatabase db = AppDatabase.getInstance(requireContext());
+        this.taskDao = db.taskDao();
+
+        updateUnsyncedTasksCount();
+
+
+
+        // Language Preference Listener
+        ListPreference languagePreference = findPreference(PREF_LANGUAGE);
+        if (languagePreference != null) {
+            languagePreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                LocaleHelper.setLocale(requireActivity(), newValue.toString());
+                requireActivity().recreate();
+                return true;
+            });
+        }
+
+        // Theme Preference Listener
+        ListPreference themePreference = findPreference(PREF_THEME);
+        if (themePreference != null) {
+            themePreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                ThemeHelper.setTheme(requireActivity(), newValue.toString());
+                requireActivity().recreate();
+                return true;
+            });
+        }
+
+        Preference backupPreference = findPreference(PREF_BACKUP);
+        if (backupPreference != null) {
+            backupPreference.setOnPreferenceClickListener(preference -> {
+                backupTasks();
+                return true;
+
+            });
+        }
+
+        // preference listener
+
+        Preference unsyncedTasksPreference = findPreference("unsynced_tasks");
+        if (unsyncedTasksPreference != null) {
+            unsyncedTasksPreference.setOnPreferenceClickListener(preference -> {
+                if(countUnsyncedTasks > 0 && NetworkUtil.isNetworkAvailable(requireContext())){
+                    showSyncConfirmationDialog();
+                }
+
+                return true;
+            });
+        }
     }
+
+    private void updateUnsyncedTasksCount() {
+        // Create a single thread executor
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            countUnsyncedTasks = taskDao.getUnsyncedTasks().size();
+
+            // Post result to main thread
+            handler.post(() -> {
+                Toast.makeText(requireContext(), "Count: " + countUnsyncedTasks, Toast.LENGTH_SHORT).show();
+                Preference unsyncedTasksPreference = findPreference("unsynced_tasks");
+                if (unsyncedTasksPreference != null) {
+                    unsyncedTasksPreference.setSummary(getString(R.string.unsynced_tasks_summary, countUnsyncedTasks));
+                }
+            });
+        });
+    }
+
+    private void showSyncConfirmationDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Sync Tasks")
+                .setMessage("You have " + countUnsyncedTasks + " unsynced tasks. Do you want to sync now?")
+                .setPositiveButton("Sync", (dialog, which) -> syncUnsyncedTasks())
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void syncUnsyncedTasks() {
+        taskRepository.syncTasks(new IApiCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Toast.makeText(getContext(), result, Toast.LENGTH_SHORT).show();
+                updateUnsyncedTasksCount();
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                updateUnsyncedTasksCount();
+            }
+        });
+    }
+
+    private void backupTasks() {
+        Toast.makeText(getContext(), R.string.loading_tasks, Toast.LENGTH_SHORT).show();
+        String currentUserId = mAuth.getCurrentUser().getUid();
+        taskRepository.getTasks(currentPage, currentUserId, new IApiCallback<List<Task>>() {
+            @Override
+            public void onSuccess(List<Task> tasks) {
+
+                try {
+                    // Generate a unique filename with timestamp
+                    String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+                    String filename = "tasks_backup_" + timestamp + ".json";
+
+                    // Convert tasks to JSON
+                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                    String jsonTasks = gson.toJson(tasks);
+
+                    try (FileOutputStream fos = requireContext().openFileOutput(filename, Context.MODE_PRIVATE)) {
+                        fos.write(jsonTasks.getBytes());
+                        Toast.makeText(getContext(), "Tasks backed up to " + filename, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (IOException e) {
+                    Toast.makeText(getContext(), "Error backing up tasks " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+
+            @Override
+            public void onError(String errorMessage) {
+                Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+            }
+
+        });
+    }
+
+
 }
