@@ -14,7 +14,6 @@ import com.example.taskmanagement.DetailTaskActivity;
 import com.example.taskmanagement.R;
 import com.example.taskmanagement.databinding.ItemTaskBinding;
 import com.example.taskmanagement.model.Task;
-import com.example.taskmanagement.service.TaskData;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,9 +23,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
     private List<Task> tasks;
 
-    // TODO: update constructor to no tasks
-    public TaskAdapter(List<Task> tasks) {
-        this.tasks = tasks;
+    public TaskAdapter() {
+        tasks = new ArrayList<>();
     }
 
     @NonNull
@@ -42,8 +40,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         holder.binding.tvTaskTitle.setText(task.getTitle());
         holder.binding.tvTaskDescription.setText(task.getDescription());
         holder.binding.tvDueDate.setText(task.getFormattedDueDate());
-        holder.binding.chCategory.setText(task.getCategory());
-        String colorCode = TaskData.getCategoryColor(task.getCategory());
+        holder.binding.chCategory.setText(task.getCategory().getName());
+        String colorCode = task.getCategory().getColorCode();
         holder.binding.chCategory.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor(colorCode)));
 
         holder.binding.swComplete.setChecked(task.isCompleted());
