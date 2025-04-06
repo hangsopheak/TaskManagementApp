@@ -8,5 +8,8 @@
     <color name="completeColor">#4CAF50</color>
     <color name="todoColor">#2196F3</color>
     <color name="overdueColor">#C71407</color>
+    <color name="primaryDark">#132A71</color>
+    <color name="textDark">#E0E0E0</color>
+    <color name="colorFocusDark">#9575CD</color>
 
 </resources>

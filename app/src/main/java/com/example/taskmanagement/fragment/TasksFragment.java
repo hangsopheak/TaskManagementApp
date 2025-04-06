@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,6 +19,7 @@ import com.example.taskmanagement.databinding.FragmentTasksBinding;
 import com.example.taskmanagement.model.Task;
 import com.example.taskmanagement.repository.IApiCallback;
 import com.example.taskmanagement.repository.TaskRepository;
+import com.example.taskmanagement.util.NetworkUtil;
 import com.google.android.material.carousel.CarouselLayoutManager;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -47,7 +49,7 @@ public class TasksFragment extends Fragment {
         binding.rcvTasks.setLayoutManager(layoutManager);
         taskAdapter = new TaskAdapter();
         binding.rcvTasks.setAdapter(taskAdapter);
-        repository = new TaskRepository();
+        repository = new TaskRepository(requireContext());
         mAuth = FirebaseAuth.getInstance();
 
         binding.rcvTasks.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -63,8 +65,47 @@ public class TasksFragment extends Fragment {
                 }
             }
         });
-
+        setSwipeToDelete();
         return binding.getRoot();
+    }
+
+    private void setSwipeToDelete() {
+        taskAdapter.setOnTaskDeleteListener(new TaskAdapter.OnTaskDeleteListener() {
+            @Override
+            public void onTaskDelete(Task task) {
+                deleteTask(task.getId());
+            }
+        });
+
+        // swipe to delete
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                taskAdapter.removeTask(viewHolder.getAdapterPosition());
+
+            }
+        }).attachToRecyclerView(binding.rcvTasks);
+    }
+
+    private void deleteTask(String id) {
+        showProgressBar();
+        repository.deleteTask(id, new IApiCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                hideProgressBar();
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                hideProgressBar();
+                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

@@ -6,10 +6,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.taskmanagement.databinding.ActivityMainBinding;
@@ -19,7 +15,8 @@ import com.example.taskmanagement.fragment.SettingFragment;
 import com.example.taskmanagement.fragment.TasksFragment;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class MainActivity extends AppCompatActivity {
+
+public class MainActivity extends BaseActivity {
 
     private ActivityMainBinding binding;
     private FirebaseAuth mAuth;
@@ -81,7 +78,12 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        binding.bottomNavigation.setSelectedItemId(R.id.nav_tasks);
+        // To ensure the selected bottom navigation item is always visible and stay where it was when activity recreated
+        if(savedInstanceState == null){
+            binding.bottomNavigation.setSelectedItemId(R.id.nav_tasks);
+        }else{
+            binding.bottomNavigation.setSelectedItemId(savedInstanceState.getInt("selectedItemId"));
+        }
     }
 
     private void LoadFragment(Fragment fragment) {

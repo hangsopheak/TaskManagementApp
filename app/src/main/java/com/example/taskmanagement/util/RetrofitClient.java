@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
     private static Retrofit retrofit = null;
     private static String baseUrl = "https://task-management-db.onrender.com/";
-    private static String dbName = "dc5e4d83-df0e-4ca1-8033-753cf03a0ed5";
+    private static String dbName = "49e74e2c-dde0-49a9-a2e9-bc016aaa2f59";
 
     // Setters for configuration
     public static void setBaseUrl(String url) {

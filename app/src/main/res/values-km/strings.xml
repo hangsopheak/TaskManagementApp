@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ការគ្រប់គ្រងការងារ</string>
+    <string name="login">ចូល</string>
+    <string name="register">ចុះឈ្មោះ</string>
+    <string name="login_here">ចូលនៅទីនេះ</string>
+    <string name="welcome_msg">សូមស្វាគមន៍ការត្រឡប់មកវិញ យើងនឹកអ្នកណាស់</string>
+    <string name="forget_your_password">ភ្លេចពាក្យសម្ងាត់?</string>
+    <string name="create_new_account">បង្កើតគណនីថ្មី</string>
+    <string name="sign_in">ចូល</string>
+    <string name="create_account">បង្កើតគណនី</string>
+    <string name="create_an_account_so_you_can_explore_all_the_existing_jobs">បង្កើតគណនីដើម្បីស្វែងរកការងារទាំងអស់ដែលមាន</string>
+    <string name="password">ពាក្យសម្ងាត់</string>
+    <string name="already_have_an_account">មានគណនីរួចហើយ?</string>
+    <string name="confirm_password">បញ្ជាក់ពាក្យសម្ងាត់</string>
+    <string name="email">អ៊ីមែល</string>
+    <string name="welcome_title">សម្រួលការងារប្រចាំថ្ងៃរបស់អ្នក</string>
+    <string name="welcome_content">ស្វែងរក និងរៀបចំការងាររបស់អ្នក ដើម្បីធ្វើឱ្យថ្ងៃរបស់អ្នកងាយស្រួល និងមិនតានតឹង</string>
+    <string name="tasks">ការងារ</string>
+    <string name="categories">ប្រភេទ</string>
+    <string name="calendar">ប្រតិទិន</string>
+    <string name="setting">ការកំណត់</string>
+    <string name="hello_blank_fragment">សួស្តី</string>
+    <string name="description">ការពិពណ៌នា</string>
+    <string name="completed">បានបញ្ចប់</string>
+    <string name="to_do">ត្រូវធ្វើ</string>
+    <string name="sign_out">ចាកចេញ</string>
+    <string name="add_task">បន្ថែមការងារ</string>
+    <string name="select_due_time">ជ្រើសរើសពេលវេលាផុតកំណត់</string>
+    <string name="select_due_date">ជ្រើសរើសកាលបរិច្ឆេទផុតកំណត់</string>
+    <string name="task_title">ចំណងជើងការងារ</string>
+    <string name="task_description">ការពិពណ៌នាអំពីការងារ</string>
+    <string name="choose_your_preferred_language">ជ្រើសរើសភាសាដែលអ្នកពេញចិត្ត</string>
+    <string name="select_app_color_scheme">ជ្រើសរើសពណ៌សម្រាប់កម្មវិធី</string>
+    <string name="default_reminder">កំណត់ការរំលឹក</string>
+    <string name="set_reminder_time_before_task_deadline">កំណត់ពេលរំលឹកមុនថ្ងៃផុតកំណត់នៃភារកិច្ច</string>
+    <string name="language">ភាសា</string>
+    <string name="backup_tasks">រក្សាទុកការងារជា File</string>
+    <string name="backup_tasks_summary">ចុចដើម្បីរក្សារទុកការងារជា JSON file</string>
+    <string name="loading_tasks">កំពុងទាញការងារ...</string>
+    <string name="tasks_have_been_backed_up_successfully">ការងារត្រូវបានរក្សារទុកដោយជោគជ័យ!</string>
+    <string name="unsynced_tasks">ការងារមិនទាន់ Sync</string>
+    <string name="unsynced_tasks_summary">ការងារចំនួន %1$d មិនទាន់ Sync</string>
+</resources>

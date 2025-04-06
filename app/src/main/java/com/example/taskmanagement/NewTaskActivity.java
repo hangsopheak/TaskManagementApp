@@ -28,7 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class NewTaskActivity extends AppCompatActivity {
+public class NewTaskActivity extends BaseActivity {
 
 
     ActivityNewTaskBinding binding;
@@ -50,14 +50,14 @@ public class NewTaskActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         categoryRepository = new CategoryRepository();
-        taskRepository = new TaskRepository();
+        taskRepository = new TaskRepository(this);
         mAuth = FirebaseAuth.getInstance();
         loadCategories();
         initDatePicker();
         initTimePicker();
         setupListeners();
-
     }
 
     private void initTimePicker() {
