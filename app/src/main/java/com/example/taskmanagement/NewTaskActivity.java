@@ -63,6 +63,11 @@ public class NewTaskActivity extends BaseActivity {
             }
         }
 
+        String title = intent.getStringExtra("title");
+        if (title != null) {
+            binding.etNewTaskTitle.setText(title);
+        }
+
         loadCategories();
         initDatePicker();
         initTimePicker();
@@ -168,6 +173,7 @@ public class NewTaskActivity extends BaseActivity {
 
         if (title.isEmpty() || dueDate.isEmpty() || dueTime.isEmpty() || selectedCategory == null) {
             Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            hideProgressBar();
             return;
         }
 

@@ -8,6 +8,32 @@
     android:fitsSystemWindows="true"
     style="@style/layoutStyle"
     tools:context=".MainActivity">
+    <ImageButton
+        android:id="@+id/btn_record_task"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:backgroundTint="#DBCBF6"
+        android:clickable="true"
+        android:src="@drawable/mic_icon"
+        android:scaleType="centerInside"
+        android:layout_gravity="bottom|end"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:elevation="8dp"
+        android:layout_margin="30dp"/>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/micLottie"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintEnd_toStartOf="@+id/btn_record_task"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="mic_animation.json"
+        app:lottie_loop="true" />
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
