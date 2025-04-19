@@ -40,4 +40,12 @@
     <string name="tasks_have_been_backed_up_successfully">Tasks have been backed up successfully!</string>
     <string name="unsynced_tasks">Unsynced Tasks</string>
     <string name="unsynced_tasks_summary">%1$d tasks pending sync</string>
+    <string name="implicit_intent">Implicit Intent</string>
+    <string name="open_rupp_website">📖 Open RUPP Website</string>
+    <string name="view_location">📍 View Location</string>
+    <string name="take_a_photo">📸 Take a Photo</string>
+    <string name="share_text">📤 Share Text</string>
+    <string name="pick_an_image">📂 Pick an Image</string>
+    <string name="dial_a_phone_number">📞 Dial a Phone Number</string>
+    <string name="new_task">New Task</string>
 </resources>

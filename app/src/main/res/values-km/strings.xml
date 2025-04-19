@@ -41,4 +41,12 @@
     <string name="tasks_have_been_backed_up_successfully">ការងារត្រូវបានរក្សារទុកដោយជោគជ័យ!</string>
     <string name="unsynced_tasks">ការងារមិនទាន់ Sync</string>
     <string name="unsynced_tasks_summary">ការងារចំនួន %1$d មិនទាន់ Sync</string>
+    <string name="implicit_intent">Implicit Intent</string>
+    <string name="open_rupp_website">📖 បើកវេបសាយ RUPP</string>
+    <string name="view_location">📍 បង្ហាញទីតាំង</string>
+    <string name="take_a_photo">📸 ថតរូប</string>
+    <string name="share_text">📤 ចែករំលែកអត្ថបទ</string>
+    <string name="pick_an_image">📂 រើសរូបភាព</string>
+    <string name="dial_a_phone_number">📞 ហៅចេញ</string>
+    <string name="new_task">ការងារថ្មី</string>
 </resources>

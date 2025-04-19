@@ -7,7 +7,11 @@
         android:title="@string/sign_out"
         app:showAsAction="never" />
     <item
+        android:id="@+id/implicit_intent"
+        android:title="@string/implicit_intent"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/newtask"
-        android:title="New Task"
+        android:title="@string/new_task"
         app:showAsAction="always" />
 </menu>
