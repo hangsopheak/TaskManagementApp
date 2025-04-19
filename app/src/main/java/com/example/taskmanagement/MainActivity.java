@@ -40,6 +40,10 @@ public class MainActivity extends BaseActivity {
             Intent intent = new Intent(this, NewTaskActivity.class);
             startActivity(intent);
             return true;
+        }else if (itemId == R.id.implicit_intent) {
+            Intent intent = new Intent(this, ImplicitIntentActivity.class);
+            startActivity(intent);
+            return true;
         } else {
             return super.onOptionsItemSelected(item);
         }
