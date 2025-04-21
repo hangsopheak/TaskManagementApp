@@ -49,4 +49,9 @@
     <string name="pick_an_image">📂 រើសរូបភាព</string>
     <string name="dial_a_phone_number">📞 ហៅចេញ</string>
     <string name="new_task">ការងារថ្មី</string>
+    <string name="show_basic_notification">Show Basic Notification</string>
+    <string name="show_bigtextstyle_notification">Show BigTextStyle Notification</string>
+    <string name="show_bigpicturestyle_notification">Show BigPictureStyle Notification</string>
+    <string name="show_notification_with_action">Show Notification with Action</string>
+    <string name="test_notification">Test Notification</string>
 </resources>
