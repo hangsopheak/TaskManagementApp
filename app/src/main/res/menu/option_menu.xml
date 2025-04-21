@@ -2,13 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/implicit_intent"
+        android:title="@string/implicit_intent"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/notification_test"
+        android:title="@string/test_notification"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/signout"
         android:icon="@android:drawable/ic_menu_send"
         android:title="@string/sign_out"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/implicit_intent"
-        android:title="@string/implicit_intent"
         app:showAsAction="never" />
     <item
         android:id="@+id/newtask"

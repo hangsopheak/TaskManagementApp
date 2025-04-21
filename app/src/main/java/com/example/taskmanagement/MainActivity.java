@@ -64,6 +64,10 @@ public class MainActivity extends BaseActivity {
             Intent intent = new Intent(this, ImplicitIntentActivity.class);
             startActivity(intent);
             return true;
+        }else if (itemId == R.id.notification_test){
+            Intent intent = new Intent(this, NotificationTestActivity.class);
+            startActivity(intent);
+            return true;
         } else {
             return super.onOptionsItemSelected(item);
         }

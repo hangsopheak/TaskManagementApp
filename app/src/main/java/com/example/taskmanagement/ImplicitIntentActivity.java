@@ -16,7 +16,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.taskmanagement.databinding.ActivityImplicitIntentBinding;
 
-public class ImplicitIntentActivity extends AppCompatActivity {
+public class ImplicitIntentActivity extends BaseActivity {
     private ActivityImplicitIntentBinding binding;
 
     private static final int REQUEST_IMAGE_PICK = 1;
