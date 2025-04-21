@@ -10,6 +10,7 @@ import android.provider.Settings;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -29,6 +30,7 @@ import com.example.taskmanagement.fragment.CategoriesFragment;
 import com.example.taskmanagement.fragment.SettingFragment;
 import com.example.taskmanagement.fragment.TasksFragment;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 
@@ -38,6 +40,7 @@ public class MainActivity extends BaseActivity {
     private ActivityMainBinding binding;
     private FirebaseAuth mAuth;
     private static final int REQUEST_CODE_MIC_PERMISSION = 1;
+    private static final int REQUEST_CODE_NOTIFICATION = 101;
     private SpeechRecognizer speechRecognizer;
     private Intent recognizerIntent;
 
@@ -132,11 +135,47 @@ public class MainActivity extends BaseActivity {
             return false;
         });
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {  // Android 13+
-//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-//                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
-//            }
-//        }
+
+        checkAndRequestNotificationPermission();
+        initFcmAndSubscribeTopic();
+
+
+    }
+
+    private void checkAndRequestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {  // Android 13+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE_NOTIFICATION);
+            }
+        }
+    }
+
+    private void initFcmAndSubscribeTopic() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w("FCM", "Fetching FCM registration token failed", task.getException());
+                        return;
+                    }
+                    String token = task.getResult();
+                    Log.d("FCM", "Device Token: " + token);
+                });
+
+        // Subscribe to topic for broadcast
+        FirebaseMessaging.getInstance().subscribeToTopic("all")
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("FCM", "Subscribed to topic: all");
+                    } else {
+                        Log.d("FCM", "Topic subscription failed.");
+                    }
+                });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults, int deviceId) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults, deviceId);
+
     }
 
     private void startVoiceRecognition() {
@@ -228,7 +267,15 @@ public class MainActivity extends BaseActivity {
                     Toast.makeText(this, "Permission denied, cannot start voice input.", Toast.LENGTH_SHORT).show();
                 }
             }
+        }
+
+        if (requestCode == REQUEST_CODE_NOTIFICATION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Notification permission granted!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Permission denied. Notifications won't appear.", Toast.LENGTH_LONG).show();
             }
+        }
 
     }
 

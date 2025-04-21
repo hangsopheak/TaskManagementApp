@@ -61,6 +61,11 @@
         <activity
             android:name=".MainActivity"
             android:exported="true" />
+        <service
+            android:name=".service.MyFirebaseMessagingService"
+            android:exported="false"
+            android:enabled="true"
+            />
     </application>
 
 </manifest>
