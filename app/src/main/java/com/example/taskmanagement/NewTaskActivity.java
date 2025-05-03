@@ -1,5 +1,6 @@
 package com.example.taskmanagement;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -54,6 +55,21 @@ public class NewTaskActivity extends BaseActivity {
         categoryRepository = new CategoryRepository();
         taskRepository = new TaskRepository(this);
         mAuth = FirebaseAuth.getInstance();
+
+        Intent intent = getIntent();
+        if (Intent.ACTION_SEND.equals(intent.getAction()) && "text/plain".equals(intent.getType())) {
+            String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+            if (sharedText != null) {
+                binding.etNewTaskTitle.setText(sharedText);
+            }
+        }
+
+
+        String title = intent.getStringExtra("title");
+        if (title != null) {
+            binding.etNewTaskTitle.setText(title);
+        }
+
         loadCategories();
         initDatePicker();
         initTimePicker();
