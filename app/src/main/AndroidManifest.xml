@@ -9,8 +9,10 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
+
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".service.MyApp"
@@ -23,6 +25,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TaskManagement"
         tools:targetApi="31">
+        <activity
+            android:name=".ActivityBackgroundDemo"
+            android:exported="false" />
         <activity
             android:name=".NotificationTestActivity"
             android:exported="false" />
@@ -61,11 +66,14 @@
         <activity
             android:name=".MainActivity"
             android:exported="true" />
+
         <service
             android:name=".service.MyFirebaseMessagingService"
-            android:exported="false"
             android:enabled="true"
-            />
+            android:exported="false" />
+        <service android:name=".background.SimpleStartedService" />
+        <service android:name=".background.SimpleForegroundService"
+            android:foregroundServiceType="location|dataSync" /> <!-- adjust type as needed -->
     </application>
 
 </manifest>

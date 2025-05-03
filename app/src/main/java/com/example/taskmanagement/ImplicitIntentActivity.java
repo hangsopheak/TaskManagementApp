@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
@@ -15,6 +16,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.taskmanagement.databinding.ActivityImplicitIntentBinding;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
+import java.util.UUID;
 
 public class ImplicitIntentActivity extends BaseActivity {
     private ActivityImplicitIntentBinding binding;
@@ -70,6 +77,24 @@ public class ImplicitIntentActivity extends BaseActivity {
         });
     }
 
+    private void uploadBitmapToFirebase(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        String filename = "photos/" + UUID.randomUUID().toString() + ".jpg";
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child(filename);
+
+        UploadTask uploadTask = storageRef.putBytes(data);
+        uploadTask.addOnSuccessListener(taskSnapshot -> {
+            storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                Log.d("FirebaseUpload", "Uploaded image URL: " + uri.toString());
+            });
+        }).addOnFailureListener(e -> {
+            Log.e("FirebaseUpload", "Upload failed: " + e.getMessage());
+        });
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -83,6 +108,8 @@ public class ImplicitIntentActivity extends BaseActivity {
                 Bundle extras = data.getExtras();
                 Bitmap imageBitmap = (Bitmap) extras.get("data");
                 binding.ivPickedImage.setImageBitmap(imageBitmap);
+
+                uploadBitmapToFirebase(imageBitmap);
             }
         }
     }

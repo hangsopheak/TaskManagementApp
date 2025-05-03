@@ -36,6 +36,7 @@ android {
 
 dependencies {
     implementation(libs.firebase.messaging)
+    implementation(libs.firebase.storage)
     val room_version = "2.5.0"
     implementation("androidx.room:room-runtime:$room_version")
     annotationProcessor("androidx.room:room-compiler:$room_version")
@@ -46,6 +47,8 @@ dependencies {
     implementation("androidx.preference:preference:$preference_version")
 
     implementation ("com.airbnb.android:lottie:6.1.0")
+    implementation ("androidx.work:work-runtime:2.9.0")
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
