@@ -11,14 +11,20 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
-import com.example.taskmanagement.background.SimpleForegroundService;
-import com.example.taskmanagement.background.SimpleStartedService;
-import com.example.taskmanagement.background.SimpleWork;
+import com.example.taskmanagement.background.FileUploadService;
+import com.example.taskmanagement.background.LogUploadWorker;
+import com.example.taskmanagement.background.MusicPlaybackService;
+import com.example.taskmanagement.background.QuoteWorker;
 import com.example.taskmanagement.databinding.ActivityBackgroundDemoBinding;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class ActivityBackgroundDemo extends AppCompatActivity {
 
@@ -34,10 +40,32 @@ public class ActivityBackgroundDemo extends AppCompatActivity {
 
         uiHandler = new Handler(Looper.getMainLooper());
 
+        binding.btnMainThread.setOnClickListener(v -> {
+            log("[MainThread] Start");
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                Log.e(TAG, "Thread interrupted", e);
+            }
+            log("[MainThread] Done!");
+        });
+
+        binding.btnThread.setOnClickListener(v -> {
+            Executors.newSingleThreadExecutor().execute(() -> {
+                try {
+                    Thread.sleep(10000); // Simulate long operation
+                    log("Thread without handler] Done!");
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "Thread interrupted", e);
+                }
+            });
+        });
+
         // Simulate background task with Thread + Handler
         binding.btnThreadHandler.setOnClickListener(v -> {
             log("[Thread+Handler] Start");
-            new Thread(() -> {
+
+            Executors.newSingleThreadExecutor().execute(() -> {
                 try {
                     Thread.sleep(3000); // Simulate long operation
                     uiHandler.post(() -> {
@@ -47,20 +75,20 @@ public class ActivityBackgroundDemo extends AppCompatActivity {
                 } catch (InterruptedException e) {
                     Log.e(TAG, "Thread interrupted", e);
                 }
-            }).start();
+            });
         });
 
         // Start a StartedService (simple one-time task)
         binding.btnStartedService.setOnClickListener(v -> {
-            log("[StartedService] Starting service...");
-            Intent intent = new Intent(this, SimpleStartedService.class);
+            log("[StartedService] Starting file upload service...");
+            Intent intent = new Intent(this, FileUploadService.class);
             startService(intent);
         });
 
         // Start a ForegroundService
         binding.btnForegroundService.setOnClickListener(v -> {
-            log("[ForegroundService] Starting...");
-            Intent intent = new Intent(this, SimpleForegroundService.class);
+            log("[ForegroundService] Starting music playback service...");
+            Intent intent = new Intent(this, MusicPlaybackService.class);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(intent);
             } else {
@@ -68,18 +96,34 @@ public class ActivityBackgroundDemo extends AppCompatActivity {
             }
         });
 
-        // Enqueue a WorkManager task
-        binding.btnWorkManager.setOnClickListener(v -> {
-            log("[WorkManager] Enqueuing background work...");
-            Constraints constraints = new Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
+
+
+        binding.btnPeriodicWork.setOnClickListener(v -> {
+            PeriodicWorkRequest quoteWork = new PeriodicWorkRequest.Builder(QuoteWorker.class, 15, TimeUnit.MINUTES)
+                    .addTag("periodic_quote")
                     .build();
 
-            OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(SimpleWork.class)
+            WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                    "QuotePeriodicTask",
+                    ExistingPeriodicWorkPolicy.KEEP,
+                    quoteWork
+            );
+
+            Toast.makeText(this, "🔁 Periodic quote generation scheduled", Toast.LENGTH_SHORT).show();
+        });
+
+        binding.btnConstrainedWork.setOnClickListener(v -> {
+            Constraints constraints = new Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.UNMETERED) // Wi-Fi
+                    .build();
+
+            OneTimeWorkRequest uploadLogs = new OneTimeWorkRequest.Builder(LogUploadWorker.class)
                     .setConstraints(constraints)
                     .build();
 
-            WorkManager.getInstance(this).enqueue(workRequest);
+            WorkManager.getInstance(this).enqueue(uploadLogs);
+
+            Toast.makeText(this, "📤 Log upload scheduled (Wi-Fi + Charging)", Toast.LENGTH_SHORT).show();
         });
     }
 

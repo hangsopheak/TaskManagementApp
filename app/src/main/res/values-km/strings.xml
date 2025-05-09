@@ -60,4 +60,8 @@
     <string name="enqueue_workmanager">Enqueue WorkManager</string>
     <string name="log_n">Log:\n</string>
     <string name="demo_background_processing">Demo Background Processing</string>
+    <string name="upload_logs_wifi">Upload Logs (WiFi)</string>
+    <string name="schedule_periodic_quote_generate">Schedule Periodic Quote Generate</string>
+    <string name="start_music_foreground_service">Start Music (Foreground Service)</string>
+    <string name="start_file_upload_startedservice">Start file upload (StartedService)</string>
 </resources>

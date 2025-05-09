@@ -71,9 +71,10 @@
             android:name=".service.MyFirebaseMessagingService"
             android:enabled="true"
             android:exported="false" />
-        <service android:name=".background.SimpleStartedService" />
-        <service android:name=".background.SimpleForegroundService"
-            android:foregroundServiceType="location|dataSync" /> <!-- adjust type as needed -->
+        <service android:name=".background.FileUploadService" />
+        <service android:name=".background.MusicPlaybackService"
+            android:foregroundServiceType="location|dataSync"
+            tools:ignore="ForegroundServicePermission" />
     </application>
 
 </manifest>
