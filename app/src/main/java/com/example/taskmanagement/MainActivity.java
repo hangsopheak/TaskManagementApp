@@ -4,11 +4,13 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -28,12 +30,14 @@ import com.example.taskmanagement.fragment.CategoriesFragment;
 import com.example.taskmanagement.fragment.SettingFragment;
 import com.example.taskmanagement.fragment.TasksFragment;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 
 
 public class MainActivity extends BaseActivity {
 
+    private static final int REQUEST_CODE_NOTIFICATION = 111;
     private ActivityMainBinding binding;
     private FirebaseAuth mAuth;
     private static final int REQUEST_CODE_MIC_PERMISSION = 1;
@@ -73,6 +77,15 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+
+    private void checkAndRequestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {  // Android 13+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE_NOTIFICATION);
+            }
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +99,8 @@ public class MainActivity extends BaseActivity {
         getSupportActionBar().setTitle("");
 
         mAuth = FirebaseAuth.getInstance();
-
+        checkAndRequestNotificationPermission();
+        initFcmAndSubscribeTopic();
 
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
            int itemId = item.getItemId();
@@ -130,6 +144,28 @@ public class MainActivity extends BaseActivity {
             }
             return false;
         });
+    }
+
+    private void initFcmAndSubscribeTopic() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w("FCM", "Fetching FCM registration token failed", task.getException());
+                        return;
+                    }
+                    String token = task.getResult();
+                    Log.d("FCM", "Device Token: " + token);
+                });
+
+        // Subscribe to topic for broadcast
+        FirebaseMessaging.getInstance().subscribeToTopic("all")
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("FCM", "Subscribed to topic: all");
+                    } else {
+                        Log.d("FCM", "Topic subscription failed.");
+                    }
+                });
     }
 
     private void startVoiceRecognition() {
