@@ -13,6 +13,9 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+
 
     <application
         android:name=".service.MyApp"
@@ -72,9 +75,10 @@
             android:enabled="true"
             android:exported="false" />
         <service android:name=".background.FileUploadService" />
+
         <service android:name=".background.MusicPlaybackService"
-            android:foregroundServiceType="location|dataSync"
-            tools:ignore="ForegroundServicePermission" />
+            android:foregroundServiceType="mediaPlayback"
+            android:exported="false" />
     </application>
 
 </manifest>

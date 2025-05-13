@@ -1,6 +1,7 @@
 package com.example.taskmanagement;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +11,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
@@ -29,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 public class ActivityBackgroundDemo extends AppCompatActivity {
 
     private static final String TAG = "BackgroundDemo";
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 2000 ;
     private ActivityBackgroundDemoBinding binding;
     private Handler uiHandler;
 
@@ -125,7 +129,9 @@ public class ActivityBackgroundDemo extends AppCompatActivity {
 
             Toast.makeText(this, "📤 Log upload scheduled (Wi-Fi + Charging)", Toast.LENGTH_SHORT).show();
         });
+
     }
+
 
     private void log(String message) {
         Log.d(TAG, message);

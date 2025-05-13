@@ -1,17 +1,28 @@
 package com.example.taskmanagement.fragment;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.taskmanagement.R;
 import com.example.taskmanagement.dao.AppDatabase;
 import com.example.taskmanagement.dao.TaskDao;
@@ -39,6 +50,8 @@ public class SettingFragment extends PreferenceFragmentCompat {
 
     private static final String PREF_LANGUAGE = "app_language";
     private static final String PREF_THEME = "app_theme";
+    private static final String PREF_REMINDER = "default_reminder_time";
+
 
     private int currentPage = 1;
     private TaskRepository repository;
@@ -46,9 +59,48 @@ public class SettingFragment extends PreferenceFragmentCompat {
     private TaskDao taskDao;
     private int countUnsyncedTasks;
 
+
+
     public SettingFragment() {
         // Required empty public constructor
     }
+
+    @NonNull
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // Inflate base view from PreferenceFragmentCompat
+        View root = super.onCreateView(inflater, container, savedInstanceState);
+
+        // Inflate custom layout containing Lottie
+        View customView = inflater.inflate(R.layout.lottie_sync_container, container, false);
+        // Insert the custom view (Lottie) at the top of preference screen
+        if (root instanceof ViewGroup) {
+            ((ViewGroup) root).addView(customView, 0);
+        }
+
+        return root;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(requireContext())
+                .registerReceiver(syncReceiver, new IntentFilter("com.example.SYNC_COMPLETED"));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(syncReceiver);
+    }
+
+    private final BroadcastReceiver syncReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateUnsyncedTasksCount();
+        }
+    };
 
     @Override
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
@@ -93,6 +145,7 @@ public class SettingFragment extends PreferenceFragmentCompat {
         // unsynced tasks
         Preference unsyncedTasksPreference = findPreference("unsynced_tasks");
         if (unsyncedTasksPreference != null) {
+
             unsyncedTasksPreference.setOnPreferenceClickListener(preference -> {
                 if(countUnsyncedTasks > 0 && NetworkUtil.isNetworkAvailable(requireContext())){
                     showSyncConfirmationDialog();
@@ -101,6 +154,19 @@ public class SettingFragment extends PreferenceFragmentCompat {
                 return true;
             });
         }
+
+        // default reminder
+        ListPreference defaultReminderPreference = findPreference(PREF_REMINDER);
+
+        if(defaultReminderPreference != null){
+            defaultReminderPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                // Save theme preference
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                prefs.edit().putString(PREF_REMINDER, newValue.toString()).apply();
+                return true;
+            });
+        }
+
 
     }
 
@@ -133,17 +199,20 @@ public class SettingFragment extends PreferenceFragmentCompat {
     }
 
     private void syncUnsyncedTasks() {
+
         repository.syncTasks(new IApiCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 Toast.makeText(getContext(), result, Toast.LENGTH_SHORT).show();
                 updateUnsyncedTasksCount();
+
             }
 
             @Override
             public void onError(String errorMessage) {
                 Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
                 updateUnsyncedTasksCount();
+
             }
         });
     }
