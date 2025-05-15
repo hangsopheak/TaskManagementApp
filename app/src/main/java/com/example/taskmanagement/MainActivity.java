@@ -72,6 +72,10 @@ public class MainActivity extends BaseActivity {
             Intent intent = new Intent(this, NotificationTestActivity.class);
             startActivity(intent);
             return true;
+        }else if (itemId == R.id.background_demo){
+            Intent intent = new Intent(this, ActivityBackgroundDemo.class);
+            startActivity(intent);
+            return true;
         } else {
             return super.onOptionsItemSelected(item);
         }

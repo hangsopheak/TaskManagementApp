@@ -11,5 +11,6 @@
     <color name="primaryDark">#132A71</color>
     <color name="textDark">#E0E0E0</color>
     <color name="colorFocusDark">#9575CD</color>
+    <color name="green">#4CAF50</color>
 
 </resources>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/demoLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+
+    <Button
+        android:id="@+id/btn_main_thread"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="Run Main Thread" />
+
+
+    <Button
+        android:id="@+id/btn_thread"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Run Thread" />
+
+
+    <Button
+        android:id="@+id/btn_thread_handler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/run_thread_handler" />
+
+    <Button
+        android:id="@+id/btn_started_service"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/start_file_upload_startedservice"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/btn_foreground_service"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/start_music_foreground_service"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/btn_periodic_work"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/schedule_periodic_quote_generate" />
+
+    <Button
+        android:id="@+id/btn_constrained_work"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/upload_logs_wifi" />
+
+    <TextView
+        android:id="@+id/log_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:textSize="14sp"
+        android:background="#EEEEEE"
+        android:padding="8dp"
+        android:text="@string/log_n" />
+</LinearLayout>

@@ -10,6 +10,10 @@
         android:title="@string/test_notification"
         app:showAsAction="never" />
     <item
+        android:id="@+id/background_demo"
+        android:title="@string/demo_background_processing"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/signout"
         android:icon="@android:drawable/ic_menu_send"
         android:title="@string/sign_out"
