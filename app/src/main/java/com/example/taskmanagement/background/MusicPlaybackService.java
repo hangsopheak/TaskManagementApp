@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 
@@ -18,7 +19,20 @@ import com.example.taskmanagement.R;
 public class MusicPlaybackService extends Service {
     private static final String CHANNEL_ID = "music_playback_channel";
     private MediaPlayer mediaPlayer;
+    private final IBinder binder = new MusicBinder();
 
+
+    public class MusicBinder extends Binder {
+        public MusicPlaybackService getService() {
+            return MusicPlaybackService.this;
+        }
+    }
+
+    public void pauseMusic() {
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+        }
+    }
 
     @SuppressLint("ForegroundServiceType")
     @Override
@@ -69,6 +83,6 @@ public class MusicPlaybackService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return binder;
     }
 }

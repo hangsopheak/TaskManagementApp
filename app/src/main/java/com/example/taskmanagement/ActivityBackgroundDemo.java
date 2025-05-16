@@ -1,9 +1,13 @@
 package com.example.taskmanagement;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -30,6 +34,38 @@ public class ActivityBackgroundDemo extends AppCompatActivity {
     private ActivityBackgroundDemoBinding binding;
     private Handler uiHandler;
 
+    private MusicPlaybackService musicService;
+    private boolean isBound = false;
+
+    private final ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MusicPlaybackService.MusicBinder binder = (MusicPlaybackService.MusicBinder) service;
+            musicService = binder.getService();
+            isBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isBound = false;
+        }
+    };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = new Intent(this, MusicPlaybackService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (isBound) {
+            unbindService(connection);
+            isBound = false;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +128,12 @@ public class ActivityBackgroundDemo extends AppCompatActivity {
                 startForegroundService(intent);
             } else {
                 startService(intent);
+            }
+        });
+
+        binding.btnPause.setOnClickListener(v -> {
+            if (isBound && musicService != null) {
+                musicService.pauseMusic();
             }
         });
 
