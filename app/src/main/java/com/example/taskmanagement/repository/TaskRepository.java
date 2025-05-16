@@ -3,11 +3,13 @@ package com.example.taskmanagement.repository;
 import android.content.Context;
 
 import androidx.work.Constraints;
+import androidx.work.Data;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
+import com.example.taskmanagement.background.ReminderWorker;
 import com.example.taskmanagement.background.SyncTaskWorker;
 import com.example.taskmanagement.dao.AppDatabase;
 import com.example.taskmanagement.dao.TaskDao;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -89,6 +92,8 @@ public class TaskRepository {
             saveTaskLocally(task);
             callback.onError("No network. Task saved locally.");
         }
+
+        scheduleTaskReminder(task);
     }
 
     private void enqueueSyncWorker() {
@@ -118,6 +123,37 @@ public class TaskRepository {
         }
         return false;
 
+    }
+
+    public void scheduleTaskReminder(Task task) {
+        int reminderInMinutes = Integer.parseInt(androidx.preference.PreferenceManager.getDefaultSharedPreferences(context)
+                .getString("default_reminder_time","15"));
+
+        boolean isTestMode = true;
+
+        long currentTime = System.currentTimeMillis();
+        long taskTime = task.getDueDate().getTime();
+        long delayInMillis = taskTime - currentTime - (reminderInMinutes * 60 * 1000);
+
+        if(isTestMode){
+            delayInMillis = 60 * 1000; // schedule to display notification after 1 minutes
+        }
+
+        if (delayInMillis <= 0) {
+            return;
+        }
+
+        Data inputData = new Data.Builder()
+                .putString("task_title", task.getTitle())
+                .build();
+
+        OneTimeWorkRequest reminderWork =
+                new OneTimeWorkRequest.Builder(ReminderWorker.class)
+                        .setInitialDelay(delayInMillis, TimeUnit.MILLISECONDS)
+                        .setInputData(inputData)
+                        .build();
+
+        WorkManager.getInstance(context).enqueue(reminderWork);
     }
 
     public void syncTasks(final IApiCallback<String> callback) {
