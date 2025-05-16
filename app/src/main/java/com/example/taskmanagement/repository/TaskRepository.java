@@ -2,6 +2,13 @@ package com.example.taskmanagement.repository;
 
 import android.content.Context;
 
+import androidx.work.Constraints;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
+
+import com.example.taskmanagement.background.SyncTaskWorker;
 import com.example.taskmanagement.dao.AppDatabase;
 import com.example.taskmanagement.dao.TaskDao;
 import com.example.taskmanagement.model.Task;
@@ -11,6 +18,7 @@ import com.example.taskmanagement.util.RetrofitClient;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -73,9 +81,43 @@ public class TaskRepository {
                 }
             });
         }else{
+
+            if (!isSyncWorkScheduled()) {
+                enqueueSyncWorker(); // enqueue only once
+            }
+
             saveTaskLocally(task);
             callback.onError("No network. Task saved locally.");
         }
+    }
+
+    private void enqueueSyncWorker() {
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.UNMETERED) // Wi-Fi only
+                .build();
+
+        OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(SyncTaskWorker.class)
+                .addTag("task_sync")
+                .setConstraints(constraints)
+                .build();
+
+        WorkManager.getInstance(context).enqueue(request);
+    }
+
+    private boolean isSyncWorkScheduled() {
+        WorkManager wm = WorkManager.getInstance(context);
+        try {
+            List<WorkInfo> infos = wm.getWorkInfosByTag("task_sync").get();
+            for (WorkInfo info : infos) {
+                if (info.getState() == WorkInfo.State.ENQUEUED || info.getState() == WorkInfo.State.RUNNING) {
+                    return true;
+                }
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
+
     }
 
     public void syncTasks(final IApiCallback<String> callback) {
