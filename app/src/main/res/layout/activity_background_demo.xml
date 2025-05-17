@@ -44,6 +44,13 @@
         android:layout_marginTop="8dp" />
 
     <Button
+        android:id="@+id/btnPause"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pause Music (Bound Service)" />
+
+
+    <Button
         android:id="@+id/btn_periodic_work"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

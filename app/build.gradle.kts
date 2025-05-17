@@ -44,6 +44,9 @@ dependencies {
     implementation ("com.squareup.okhttp3:logging-interceptor:4.12.0")
     val preference_version = "1.2.1"
     implementation("androidx.preference:preference:$preference_version")
+    implementation ("androidx.work:work-runtime:2.9.0")
+    implementation ("androidx.concurrent:concurrent-futures:1.2.0")
+
 
     implementation ("com.airbnb.android:lottie:6.1.0")
     implementation(libs.appcompat)

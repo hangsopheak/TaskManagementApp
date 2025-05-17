@@ -2,6 +2,15 @@ package com.example.taskmanagement.repository;
 
 import android.content.Context;
 
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
+
+import com.example.taskmanagement.background.SyncTaskWorker;
+import com.example.taskmanagement.background.TaskReminderWorker;
 import com.example.taskmanagement.dao.AppDatabase;
 import com.example.taskmanagement.dao.TaskDao;
 import com.example.taskmanagement.model.Task;
@@ -11,7 +20,9 @@ import com.example.taskmanagement.util.RetrofitClient;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -75,7 +86,74 @@ public class TaskRepository {
         }else{
             saveTaskLocally(task);
             callback.onError("No network. Task saved locally.");
+
+            if (!isSyncWorkScheduled()) {
+                enqueueSyncWorker();
+            }
         }
+
+        scheduleTaskReminder(task);
+    }
+
+    public void scheduleTaskReminder(Task task) {
+        int reminderInMinutes = Integer.parseInt(androidx.preference.PreferenceManager.getDefaultSharedPreferences(context)
+                .getString("default_reminder_time","15"));
+
+        boolean isTestMode = true;
+
+        long currentTime = System.currentTimeMillis();
+        long taskTime = task.getDueDate().getTime();
+        long delayInMillis = taskTime - currentTime - (reminderInMinutes * 60 * 1000);
+
+        if(isTestMode){
+            delayInMillis = 60 * 1000; // schedule to display notification after 1 minutes
+        }
+
+        if (delayInMillis <= 0) {
+            return;
+        }
+
+        Data inputData = new Data.Builder()
+                .putString("task_title", task.getTitle())
+                .putString("task_description", task.getDescription())
+                .build();
+
+        OneTimeWorkRequest reminderWork =
+                new OneTimeWorkRequest.Builder(TaskReminderWorker.class)
+                        .setInitialDelay(delayInMillis, TimeUnit.MILLISECONDS)
+                        .setInputData(inputData)
+                        .build();
+
+        WorkManager.getInstance(context).enqueue(reminderWork);
+    }
+
+    private void enqueueSyncWorker() {
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.UNMETERED) // Wi-Fi only
+                .build();
+
+        OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(SyncTaskWorker.class)
+                .addTag("task_sync")
+                .setConstraints(constraints)
+                .build();
+
+        WorkManager.getInstance(context).enqueue(request);
+    }
+
+    private boolean isSyncWorkScheduled() {
+        WorkManager wm = WorkManager.getInstance(context);
+        try {
+            List<WorkInfo> infos = wm.getWorkInfosByTag("task_sync").get();
+            for (WorkInfo info : infos) {
+                if (info.getState() == WorkInfo.State.ENQUEUED || info.getState() == WorkInfo.State.RUNNING) {
+                    return true;
+                }
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
+
     }
 
     public void syncTasks(final IApiCallback<String> callback) {
