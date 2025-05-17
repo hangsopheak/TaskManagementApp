@@ -46,6 +46,9 @@ dependencies {
     implementation("androidx.preference:preference:$preference_version")
 
     implementation ("com.airbnb.android:lottie:6.1.0")
+    implementation ("androidx.work:work-runtime:2.10.1")
+    implementation ("androidx.concurrent:concurrent-futures:1.2.0")
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
