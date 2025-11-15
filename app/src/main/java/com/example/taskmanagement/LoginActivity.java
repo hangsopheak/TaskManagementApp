@@ -2,11 +2,13 @@ package com.example.taskmanagement;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -17,15 +19,19 @@ import com.example.taskmanagement.model.User;
 import com.example.taskmanagement.service.IUserService;
 import com.example.taskmanagement.service.MyApp;
 import com.example.taskmanagement.service.UserService;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
     private ActivityLoginBinding binding;
-    IUserService userService;
 
     private ActivityResultLauncher<Intent> activityResultLauncher;
+    private FirebaseAuth mAuth;
 
 
     @Override
@@ -36,9 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        userService =  ((MyApp) getApplication()).getUserService();
-
-        List<User> users = userService.getAllUsers();
+        mAuth = FirebaseAuth.getInstance();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -68,22 +72,35 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    private void reload() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     private void onCreateNewAccountClicked() {
         Intent intent = new Intent(this, RegisterActivity.class);
         activityResultLauncher.launch(intent);
     }
 
     private void onSignInClicked() {
+        binding.pbLoginProgress.setVisibility(View.VISIBLE);
         String email = binding.etEmail.getText().toString();
         String password = binding.etPassword.getText().toString();
-        User user = userService.login(email, password);
-        if(user != null){
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("email", user.getEmail());
-            startActivity(intent);
-            finish();
-        }
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            binding.pbLoginProgress.setVisibility(View.INVISIBLE);
+                            reload();
+                        } else {
+                            Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            binding.pbLoginProgress.setVisibility(View.INVISIBLE);
+                        }
+                    }
 
-        Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show();
+
+                });
     }
 }
