@@ -27,7 +27,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
     private ActivityLoginBinding binding;
     IUserService userService;

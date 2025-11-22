@@ -49,7 +49,7 @@ public class TasksFragment extends Fragment {
         binding.rcvTasks.setLayoutManager(layoutManager);
         taskAdapter = new TaskAdapter();
         binding.rcvTasks.setAdapter(taskAdapter);
-        repository = new TaskRepository();
+        repository = new TaskRepository(requireContext());
         mAuth = FirebaseAuth.getInstance();
 
         binding.rcvTasks.addOnScrollListener(new RecyclerView.OnScrollListener() {
