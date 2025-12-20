@@ -9,13 +9,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.taskmanagement.databinding.ActivityNotificationTestBinding;
 
@@ -24,6 +27,7 @@ public class NotificationTestActivity extends AppCompatActivity {
     ActivityNotificationTestBinding binding;
     private NotificationManager notificationManager;
     private final String CHANNEL_ID = "task_notify_channel";
+    private static final int REQ_NOTIF = 1001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +38,9 @@ public class NotificationTestActivity extends AppCompatActivity {
 
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         createNotificationChannel();
+
+        // ensure we have runtime notification permission on Android 13+
+        ensureNotificationPermission();
 
         binding.btnBasic.setOnClickListener(v -> showBasicNotification());
         binding.btnBigText.setOnClickListener(v -> showBigTextNotification());
@@ -53,6 +60,31 @@ public class NotificationTestActivity extends AppCompatActivity {
         }
     }
 
+    // Request POST_NOTIFICATIONS at runtime for Android 13+
+    private void ensureNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        REQ_NOTIF);
+            }
+        }
+    }
+
+    private boolean hasNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    == PackageManager.PERMISSION_GRANTED;
+        }
+        return true;
+    }
+
+    private void safeNotify(NotificationManager nm, int id, android.app.Notification notification) {
+        if (!hasNotificationPermission()) return;
+        nm.notify(id, notification);
+    }
+
     private void showBasicNotification() {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -60,7 +92,7 @@ public class NotificationTestActivity extends AppCompatActivity {
                 .setContentText("This is a basic notification example.")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-        notificationManager.notify(1, builder.build());
+        safeNotify(notificationManager, 1, builder.build());
     }
 
     private void showBigTextNotification() {
@@ -73,7 +105,7 @@ public class NotificationTestActivity extends AppCompatActivity {
                 .setStyle(bigText)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-        notificationManager.notify(2, builder.build());
+        safeNotify(notificationManager, 2, builder.build());
     }
 
     private void showBigPictureNotification() {
@@ -92,7 +124,7 @@ public class NotificationTestActivity extends AppCompatActivity {
                 .setStyle(bigPicture)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-        notificationManager.notify(3, builder.build());
+        safeNotify(notificationManager, 3, builder.build());
     }
 
     private void showActionNotification() {
@@ -108,6 +140,17 @@ public class NotificationTestActivity extends AppCompatActivity {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true);
 
-        notificationManager.notify(4, builder.build());
+        safeNotify(notificationManager, 4, builder.build());
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQ_NOTIF) {
+            boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+            if (!granted) {
+                Toast.makeText(this, "Notification permission denied. Notifications will be disabled.", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }
